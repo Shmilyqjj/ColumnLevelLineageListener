@@ -176,6 +176,9 @@ public class MetadataListener extends MetaStoreEventListener {
                     if (t.getPrivileges() != null) {
                         writer.name("privileges").value(t.getPrivileges().toString());
                     }
+                    writer.name("inputFormat").value(t.getSd().getInputFormat());
+                    writer.name("outputFormat").value(t.getSd().getOutputFormat());
+                    writer.name("serializationLib").value(t.getSd().getSerdeInfo().getSerializationLib());
                     writer.endObject();
                     writer.close();
                 } catch (IOException e) {
