@@ -6,13 +6,19 @@
 
     <groupId>top.shmilyqjj</groupId>
     <artifactId>ColumnLevelLineageListener</artifactId>
+    <packaging>pom</packaging>
     <version>1.0</version>
+
+    <modules>
+        <module>hive-lineages-collector</module>
+        <module>spark-lineages-collector</module>
+    </modules>
 
     <dependencies>
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
-            <version>4.7</version>
+            <version>4.12.0</version>
         </dependency>
     </dependencies>
     <build>
@@ -24,9 +30,9 @@
                 <executions>
                     <execution>
                         <id>antlr</id>
-                        <goals>
-                            <goal>antlr4</goal>
-                        </goals>
+<!--                        <goals>-->
+<!--                            <goal>antlr4</goal>-->
+<!--                        </goals>-->
                         <phase>none</phase>
                     </execution>
                 </executions>
