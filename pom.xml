@@ -12,6 +12,7 @@
     <modules>
         <module>hive-lineages-collector</module>
         <module>spark-lineages-collector</module>
+        <module>hive-metadata-collector</module>
     </modules>
 
     <dependencies>
