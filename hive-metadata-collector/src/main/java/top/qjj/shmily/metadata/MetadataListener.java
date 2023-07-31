@@ -43,7 +43,7 @@ public class MetadataListener extends MetaStoreEventListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(MetadataListener.class);
     private static final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-    private static final JsonParser jsonParser = new JsonParser();;
+    private static final JsonParser jsonParser = new JsonParser();
     private final static String META_SERVER_REST = "http://192.168.82.30:8080/json";
 
     public MetadataListener(final Configuration config) {
