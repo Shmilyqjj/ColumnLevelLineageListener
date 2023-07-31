@@ -40,6 +40,7 @@ public class Metadata {
     private EntityType entityType;
     private String entityFQN;
     private String operation;
+    private Long operationTime;
     private EntityInfo entityInfo;
 
     @Data

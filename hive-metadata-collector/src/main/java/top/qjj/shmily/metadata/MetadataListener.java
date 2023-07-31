@@ -93,6 +93,7 @@ public class MetadataListener extends MetaStoreEventListener {
                 Metadata metadata = new Metadata(Metadata.EntityType.DATABASE,
                         getEntityFQN(entityInfo),
                         EventMessage.EventType.CREATE_DATABASE.toString(),
+                        System.currentTimeMillis(),
                         entityInfo);
                 send(metadata);
             } catch (Exception e) {
@@ -144,6 +145,7 @@ public class MetadataListener extends MetaStoreEventListener {
                 Metadata metadata = new Metadata(Metadata.EntityType.DATABASE,
                         getEntityFQN(entityInfo),
                         EventMessage.EventType.DROP_DATABASE.toString(),
+                        System.currentTimeMillis(),
                         entityInfo);
                 send(metadata);
             }catch (Exception e) {
@@ -214,6 +216,7 @@ public class MetadataListener extends MetaStoreEventListener {
                 Metadata metadata = new Metadata(Metadata.EntityType.TABLE,
                         getEntityFQN(entityInfo),
                         EventMessage.EventType.CREATE_TABLE.toString(),
+                        System.currentTimeMillis(),
                         entityInfo);
                 send(metadata);
             } catch (Exception e) {
@@ -248,6 +251,7 @@ public class MetadataListener extends MetaStoreEventListener {
                 Metadata metadata = new Metadata(Metadata.EntityType.TABLE,
                         getEntityFQN(entityInfo),
                         EventMessage.EventType.DROP_TABLE.toString(),
+                        System.currentTimeMillis(),
                         entityInfo);
                 send(metadata);
             } catch (Exception e) {
@@ -315,6 +319,7 @@ public class MetadataListener extends MetaStoreEventListener {
                 Metadata metadata = new Metadata(Metadata.EntityType.TABLE,
                         getEntityFQN(entityInfo),
                         EventMessage.EventType.ALTER_TABLE.toString(),
+                        System.currentTimeMillis(),
                         entityInfo);
                 send(metadata);
             } catch (Exception e) {
@@ -368,6 +373,7 @@ public class MetadataListener extends MetaStoreEventListener {
                     Metadata metadata = new Metadata(Metadata.EntityType.PARTITION,
                             getEntityFQN(entityInfo),
                             EventMessage.EventType.ADD_PARTITION.toString(),
+                            System.currentTimeMillis(),
                             entityInfo);
                     send(metadata);
                 }
@@ -420,6 +426,7 @@ public class MetadataListener extends MetaStoreEventListener {
                     Metadata metadata = new Metadata(Metadata.EntityType.PARTITION,
                             getEntityFQN(entityInfo),
                             EventMessage.EventType.DROP_PARTITION.toString(),
+                            System.currentTimeMillis(),
                             entityInfo);
                     send(metadata);
                 }
@@ -473,6 +480,7 @@ public class MetadataListener extends MetaStoreEventListener {
                     Metadata metadata = new Metadata(Metadata.EntityType.PARTITION,
                             getEntityFQN(entityInfo),
                             EventMessage.EventType.ALTER_PARTITION.toString(),
+                            System.currentTimeMillis(),
                             entityInfo);
                     send(metadata);
                 }
@@ -512,6 +520,7 @@ public class MetadataListener extends MetaStoreEventListener {
                 Metadata metadata = new Metadata(Metadata.EntityType.FUNCTION,
                         getEntityFQN(entityInfo),
                         EventMessage.EventType.CREATE_FUNCTION.toString(),
+                        System.currentTimeMillis(),
                         entityInfo);
                 send(metadata);
             } catch (Exception e) {
@@ -547,6 +556,7 @@ public class MetadataListener extends MetaStoreEventListener {
                 Metadata metadata = new Metadata(Metadata.EntityType.FUNCTION,
                         getEntityFQN(entityInfo),
                         EventMessage.EventType.DROP_FUNCTION.toString(),
+                        System.currentTimeMillis(),
                         entityInfo);
                 send(metadata);
             } catch (Exception e) {
@@ -580,6 +590,7 @@ public class MetadataListener extends MetaStoreEventListener {
                 Metadata metadata = new Metadata(Metadata.EntityType.CATALOG,
                         catalog.getName(),
                         EventMessage.EventType.CREATE_CATALOG.toString(),
+                        System.currentTimeMillis(),
                         entityInfo);
                 send(metadata);
             }catch (Exception e) {
@@ -611,6 +622,7 @@ public class MetadataListener extends MetaStoreEventListener {
                 Metadata metadata = new Metadata(Metadata.EntityType.CATALOG,
                         catalog.getName(),
                         EventMessage.EventType.ALTER_CATALOG.toString(),
+                        System.currentTimeMillis(),
                         entityInfo);
                 send(metadata);
             }catch (Exception e) {
@@ -642,6 +654,7 @@ public class MetadataListener extends MetaStoreEventListener {
                 Metadata metadata = new Metadata(Metadata.EntityType.CATALOG,
                         catalog.getName(),
                         EventMessage.EventType.DROP_CATALOG.toString(),
+                        System.currentTimeMillis(),
                         entityInfo);
                 send(metadata);
             }catch (Exception e) {
