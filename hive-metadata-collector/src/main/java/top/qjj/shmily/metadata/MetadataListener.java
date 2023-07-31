@@ -36,11 +36,6 @@ import static org.apache.hadoop.hive.metastore.Warehouse.DEFAULT_CATALOG_NAME;
  */
 public class MetadataListener extends MetaStoreEventListener {
 
-
-    /**
-     * 2023-07-30 00:00:21,520 INFO  org.apache.hadoop.hive.metastore.HiveMetaStore.audit: [pool-9-thread-6]: ugi=etl@SHMILY-QJJ.TOP   ip=10.2.5.101 cmd=create_table: Table(tableName:qjj_test_hahaha, dbName:default, owner:etl, createTime:1690646421, lastAccessTime:0, retention:0, sd:StorageDescriptor(cols:[FieldSchema(name:id, type:int, comment:null), FieldSchema(name:name, type:string, comment:null)], location:null, inputFormat:org.apache.hadoop.mapred.TextInputFormat, outputFormat:org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat, compressed:false, numBuckets:-1, serdeInfo:SerDeInfo(name:null, serializationLib:org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, parameters:{serialization.format=1}), bucketCols:[], sortCols:[], parameters:{}, skewedInfo:SkewedInfo(skewedColNames:[], skewedColValues:[], skewedColValueLocationMaps:{}), storedAsSubDirectories:false), partitionKeys:[], parameters:{totalSize=0, numRows=0, rawDataSize=0, COLUMN_STATS_ACCURATE={"BASIC_STATS":"true"}, numFiles=0, numFilesErasureCoded=0}, viewOriginalText:null, viewExpandedText:null, tableType:MANAGED_TABLE, privileges:PrincipalPrivilegeSet(userPrivileges:{etl=[PrivilegeGrantInfo(privilege:INSERT, createTime:-1, grantor:etl, grantorType:USER, grantOption:true), PrivilegeGrantInfo(privilege:SELECT, createTime:-1, grantor:etl, grantorType:USER, grantOption:true), PrivilegeGrantInfo(privilege:UPDATE, createTime:-1, grantor:etl, grantorType:USER, grantOption:true), PrivilegeGrantInfo(privilege:DELETE, createTime:-1, grantor:etl, grantorType:USER, grantOption:true)]}, groupPrivileges:null, rolePrivileges:null), temporary:false, ownerType:USER)
-     */
-
     private static final Logger LOG = LoggerFactory.getLogger(MetadataListener.class);
     private static final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
     private static final JsonParser jsonParser = new JsonParser();
