@@ -101,6 +101,7 @@ public class MetadataListener extends MetaStoreEventListener {
     /**
      * 删库跑路 listener
      * eg: {"entityType":"DATABASE","entityFQN":"hive.test","operation":"DROP_DATABASE","entityInfo":{"name":"test","locationUri":"hdfs://shmily:8020/user/hive/warehouse/test.db","parameters":{},"ownerName":"hdfs","ownerType":"USER","catalogName":"hive","extension":{}}}
+     * note: drop database test cascade; 如果test库下面存在表，强制删除时会触发多条DROP_TABLE记录以及一条DROP_DATABASE记录
      * @param dbEvent DropDatabaseEvent
      */
     @Override
