@@ -100,7 +100,7 @@ public class HttpClient {
             connection.setDoInput(true);
             // 设置传入参数的格式:请求参数应该是 name1=value1&name2=value2 的形式。
             connection.setRequestProperty("Content-Type", "application/json; enconding=utf-8");
-            if (!requestProperties.isEmpty()) {
+            if (requestProperties != null && !requestProperties.isEmpty()) {
                 // 这里可以传需要的参数 如鉴权信息 token 以及其他参数
                 for (String key : requestProperties.keySet()) {
                     if (key != null) {

@@ -739,7 +739,7 @@ public class MetadataListener extends MetaStoreEventListener {
         try {
             String postData = gson.toJson(metadata);
             LOG.info("==================" + postData);
-            String res = HttpClient.doPost(META_SERVER_REST, postData, new HashMap<>(0));
+            String res = HttpClient.doPost(META_SERVER_REST, postData, null);
             LOG.info("MetadataListener post res:{}", res);
         }catch (Exception e) {
             LOG.error("MetadataListener send data failed.errMsg: {}", e.getMessage());
