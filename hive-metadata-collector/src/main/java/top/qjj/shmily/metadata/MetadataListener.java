@@ -32,7 +32,9 @@ import static org.apache.hadoop.hive.metastore.Warehouse.DEFAULT_CATALOG_NAME;
  * @CreateTime: 2023/7/29 13:35
  * @Site: shmily-qjj.top
  * @References: Hive源码 org.apache.hive.hcatalog.listener.DbNotificationListener or org.apache.hive.hcatalog.listener.NotificationListener
- * @Usage: [hive-site.xml] hive.metastore.event.listeners=top.qjj.shmily.metadata.MetadataListener
+ * @Usage:
+ *   copy jar to $HIVE_HOME/lib
+ *   [hive-site.xml] hive.metastore.event.listeners=top.qjj.shmily.metadata.MetadataListener
  */
 public class MetadataListener extends MetaStoreEventListener {
 
