@@ -13,6 +13,7 @@ import org.apache.hadoop.hive.metastore.MetaStoreEventListener;
 import org.apache.hadoop.hive.metastore.api.*;
 import org.apache.hadoop.hive.metastore.events.*;
 import org.apache.hadoop.hive.metastore.messaging.EventMessage;
+import org.apache.hadoop.hive.metastore.utils.MetaStoreUtils;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -271,10 +272,35 @@ public class MetadataListener extends MetaStoreEventListener {
             try {
                 // alter后的表信息收集
                 Table t = tableEvent.getNewTable();
+                Table oldTable = tableEvent.getOldTable();
                 StringBuilderWriter ext = new StringBuilderWriter();
                 JsonWriter writer = new JsonWriter(ext);
                 try {
                     writer.beginObject();
+                    writer.name("isTruncateOp").value(tableEvent.getIsTruncateOp());
+                    writer.name("oldTableName").value(String.format("%s.%s", oldTable.getDbName(), oldTable.getTableName()));
+
+                    try {
+                        // getIHMSHandler 可以获取hms对象进行hms操作
+                        t = tableEvent.getIHMSHandler().get_table_core(DEFAULT_CATALOG_NAME, oldTable.getDbName(), oldTable.getTableName());
+                        t.validate();
+                        writer.name("oldTableExists").value(true);
+
+                        int oldColSize = oldTable.getSd().getColsSize();
+                        int newColSize = t.getSd().getColsSize();
+                        if (oldColSize > newColSize) {
+                            writer.name("operation").value("ALTER_TABLE_DROP_COLUMN");
+                        }else if (oldColSize < newColSize) {
+                            writer.name("operation").value("ALTER_TABLE_ADD_COLUMN");
+                        }else {
+                            writer.name("operation").value("ALTER_TABLE_RENAME_COLUMN");
+                        }
+                    } catch (MetaException | NoSuchObjectException e) {
+                        // ALTER TABLE后旧表不存在 推断是RENAME_TABLE操作
+                        writer.name("oldTableExists").value(false);
+                        writer.name("operation").value("ALTER_TABLE_RENAME_TABLE");
+                    }
+
                     if (t.getCreationMetadata() != null) {
                         writer.name("creationMetadata").value(t.getCreationMetadata().toString());
                     }
@@ -563,7 +589,7 @@ public class MetadataListener extends MetaStoreEventListener {
         }
     }
 
-    // 5. Catalog相关元数据变更 (TODO)
+    // 5. Catalog相关元数据变更
 
     /**
      * 创建catalog listener
