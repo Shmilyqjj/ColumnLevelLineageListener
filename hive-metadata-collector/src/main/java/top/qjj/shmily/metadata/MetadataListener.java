@@ -1,7 +1,5 @@
 package top.qjj.shmily.metadata;
 
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
@@ -13,14 +11,11 @@ import org.apache.hadoop.hive.metastore.MetaStoreEventListener;
 import org.apache.hadoop.hive.metastore.api.*;
 import org.apache.hadoop.hive.metastore.events.*;
 import org.apache.hadoop.hive.metastore.messaging.EventMessage;
-import org.apache.hadoop.hive.metastore.utils.MetaStoreUtils;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.qjj.shmily.metadata.bean.Metadata;
 import top.qjj.shmily.metadata.utils.HttpClient;
-
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,16 +31,33 @@ import static org.apache.hadoop.hive.metastore.Warehouse.DEFAULT_CATALOG_NAME;
  * @Usage:
  *   copy jar to $HIVE_HOME/lib
  *   [hive-site.xml] hive.metastore.event.listeners=top.qjj.shmily.metadata.MetadataListener
+ *   [hive-site.xml] metadata.listener.service.name=your_cluster_name
+ *   [hive-site.xml] metadata.listener.meta.server.rest=your_meta_server_rest_endpoint
+ *   可选项：开启lastAccessTime属性 [hive-site.xml]
+ *   <property>
+ *    <name>hive.security.authorization.sqlstd.confwhitelist.append</name>
+ *    <value>hive\.exec\.pre\.hooks</value>
+ *   </property>
+ *   <property>
+ *    <name>hive.exec.pre.hooks</name>
+ *    <value>org.apache.hadoop.hive.ql.hooks.UpdateInputAccessTimeHook$PreExec</value>
+ *   </property>
  */
 public class MetadataListener extends MetaStoreEventListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(MetadataListener.class);
     private static final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
     private static final JsonParser jsonParser = new JsonParser();
-    private final static String META_SERVER_REST = "http://192.168.82.30:8080/json";
+    private static String META_SERVER_REST;
+    private static String SERVICE_NAME;
 
     public MetadataListener(final Configuration config) {
         super(config);
+        // config可以获取到hive-site里的配置信息
+        // 数据所在集群名
+        SERVICE_NAME = config.get("metadata.listener.service.name", "hive");
+        // 元数据上报rest地址
+        META_SERVER_REST = config.get("metadata.listener.meta.server.rest", "http://192.168.82.30:8080/json");
     }
 
     // 1. Database相关元数据变更
@@ -154,6 +166,11 @@ public class MetadataListener extends MetaStoreEventListener {
         }
     }
 
+    @Override
+    public void onAlterDatabase(AlterDatabaseEvent dbEvent) {
+        // TODO alter database listener
+    }
+
     // 2. Table相关元数据变更
 
     /**
@@ -166,6 +183,7 @@ public class MetadataListener extends MetaStoreEventListener {
         if(tableEvent.getStatus()) {
             try {
                 Table t = tableEvent.getTable();
+                boolean isPartitioned = t.isSetPartitionKeys() && t.getPartitionKeys().size() != 0;
                 StringBuilderWriter ext = new StringBuilderWriter();
                 JsonWriter writer = new JsonWriter(ext);
                 try {
@@ -175,7 +193,7 @@ public class MetadataListener extends MetaStoreEventListener {
                     }
                     writer.name("createTime").value(t.getCreateTime());
                     writer.name("lastAccessTime").value(t.getLastAccessTime());
-                    if (t.isSetPartitionKeys()){
+                    if (isPartitioned){
                         writer.name("isPartitioned").value(true);
                         List<String> partitionKeys = t.getPartitionKeys().stream().map(x -> String.format("%s#%s", x.getName(), x.getType())).collect(Collectors.toList());
                         writer.name("partitionKeys").value(StringUtils.join(partitionKeys, ","));
@@ -273,6 +291,7 @@ public class MetadataListener extends MetaStoreEventListener {
                 // alter后的表信息收集
                 Table t = tableEvent.getNewTable();
                 Table oldTable = tableEvent.getOldTable();
+                boolean isPartitioned = t.isSetPartitionKeys() && t.getPartitionKeys().size() != 0;
                 StringBuilderWriter ext = new StringBuilderWriter();
                 JsonWriter writer = new JsonWriter(ext);
                 try {
@@ -306,10 +325,15 @@ public class MetadataListener extends MetaStoreEventListener {
                     }
                     writer.name("createTime").value(t.getCreateTime());
                     writer.name("lastAccessTime").value(t.getLastAccessTime());
-                    if (t.getPartitionKeysSize() != 0){
-                        List<String> partitionKeys = t.getPartitionKeys().stream().map(FieldSchema::getName).collect(Collectors.toList());
+
+                    if (isPartitioned) {
+                        writer.name("isPartitioned").value(true);
+                        List<String> partitionKeys = t.getPartitionKeys().stream().map(x -> String.format("%s#%s", x.getName(), x.getType())).collect(Collectors.toList());
                         writer.name("partitionKeys").value(StringUtils.join(partitionKeys, ","));
+                    }else {
+                        writer.name("isPartitioned").value(false);
                     }
+
                     if (t.getSd().getBucketColsSize() != 0) {
                         writer.name("bucketCols").value(StringUtils.join(t.getSd().getBucketCols(), ","));
                     }
@@ -749,6 +773,7 @@ public class MetadataListener extends MetaStoreEventListener {
      */
     private String getEntityFQN(Metadata.EntityInfo entityInfo) {
         List<String> names = new ArrayList<>();
+        names.add(SERVICE_NAME);
         names.add(entityInfo.getCatalogName() == null || Objects.equals(entityInfo.getCatalogName(), "")
                 ? "hive"
                 : entityInfo.getCatalogName());
