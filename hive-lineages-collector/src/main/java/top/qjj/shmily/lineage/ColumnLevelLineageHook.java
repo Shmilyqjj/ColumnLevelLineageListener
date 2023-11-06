@@ -272,7 +272,7 @@ public class ColumnLevelLineageHook implements ExecuteWithHookContext {
                             // 映射类型Edge 生成字段关系 target只有一个字段（_c0这种的为临时输出字段名，因为无输出表，血缘不计） source有0到多个
                             List<Vertex> targets = new ArrayList<>(edge.targets);
                             List<String> fromColumns = edge.sources.stream().map(v -> String.format("hive.%s", v.label)).collect(Collectors.toList());
-                            if (targets.size() == 0 || fromColumns.size() == 0) {
+                            if (targets.size() == 0) {
                                 // 纯select语句 不生成血缘
                                 if(lineageDebug) {
                                     log(String.format("[ColumnLevelLineageHook]select语句，无血缘关系 fromColumns.size:%s targets.size:%s",fromColumns.size(),targets.size()));
